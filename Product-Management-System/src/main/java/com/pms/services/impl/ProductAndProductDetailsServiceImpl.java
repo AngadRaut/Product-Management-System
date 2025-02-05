@@ -111,6 +111,27 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
     }
 
     @Override
+    public ProductResponse findProductByProductName(String productName) {
+        log.info("Received request to find product by productName : {}", productName);
+
+        Product product = this.productRepository.findProductByProductName(productName)
+                .orElseThrow(() -> {
+                    log.warn("Product not found for name : {}", productName);
+                    return new ResourceNotFoundException("Product with name " + productName + " is not present in the records.");
+                });
+
+        Long productId = product.getProductId();
+        ProductDetails productDetails = this.productDetailsRepository.findProductDetailsByProductId(productId)
+                .orElseThrow(() -> {
+                    log.warn("Product details not found for product name : {}", productName);
+                    return new ResourceNotFoundException("ProductDetails for product product name  " + productName + " are not present in the records.");
+                });
+
+        log.info("Product found with name : {}. Returning product details.", productName);
+        return new ProductResponse(product, productDetails);
+    }
+
+    @Override
     public void deleteProductById(Long productId) {
         log.info("Received request to delete product by ID: {}", productId);
         Optional<Product> byId = this.productRepository.findById(productId);

@@ -21,7 +21,6 @@ public class GlobalExceptionHandler {
         log.warn("Resource with the given identifier was not found.");
         log.info("Ensure the provided details are correct.");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found. Please check your request details.");
-
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

@@ -1,7 +1,5 @@
 package com.pms.controller;
 
-import com.pms.custom_exceptions.ResourceNotFoundException;
-import com.pms.dto.ProductResponse;
 import com.pms.entities.Category;
 import com.pms.services.CategoryService;
 import jakarta.validation.Valid;
@@ -14,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/category")
@@ -26,16 +23,16 @@ public class CategoryController {
 
     // add category
     @PostMapping("/add")
-    public ResponseEntity<String> addCategory(@Valid @RequestBody Category category, BindingResult bindingResult){
-        log.info("Received request to add category : {}", category);
+    public ResponseEntity<?> addCategory(@Valid @RequestBody Category category, BindingResult bindingResult){
+        log.info("Received request to add category.");
         // Validate the input
         if (bindingResult.hasErrors()) {
             log.warn("Validation failed for category request: {}", bindingResult.getAllErrors());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input\n"+bindingResult.getAllErrors());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
         }
         Category category1 = this.categoryService.saveCategory(category);
-        log.info("Category successfully added in records : {}", category1);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Category stored successfully!!"+category1);
+        log.info("Category successfully added in records categoryId:{}",category1.getCategoryId());
+        return ResponseEntity.status(HttpStatus.CREATED).body("Category added categoryId:"+category1.getCategoryId());
     }
 
     // find product by id
@@ -58,6 +55,15 @@ public class CategoryController {
 
         log.info("Categories retrieved successfully. Total categories: {}", categories.size());
         return ResponseEntity.status(HttpStatus.OK).body("Categories retrieved successfully. Total categories:"+categories.size());
+    }
+
+    // find category by name
+    @GetMapping("/get/name/{name}")
+    public ResponseEntity<?> getCategoryByName(@PathVariable("name")String categoryName){
+        log.info("Received request to fetch category with name: {}", categoryName);
+        Category categoryByName = categoryService.findCategoryByName(categoryName);
+        log.info("Successfully retrieved category: {}", categoryByName);
+        return ResponseEntity.ok(categoryByName);
     }
 
     // delete category

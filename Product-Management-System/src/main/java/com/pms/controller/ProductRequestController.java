@@ -27,13 +27,14 @@ public class ProductRequestController {
         this.service = service;
     }
 
+
     @PostMapping("/add")
     public ResponseEntity<?> add(@Valid @RequestBody ProductRequest productRequest, BindingResult result){
         log.info("Received request to add product.");
 
         // Validate the input
         if (result.hasErrors()) {
-            log.warn("Validation failed for product request");
+            log.warn("Validation failed for product request:{}",result.getAllErrors());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
         String string = this.service.saveProductAndProductDetails(productRequest);
@@ -48,6 +49,15 @@ public class ProductRequestController {
         log.info("Product found with ID {}", productId);
         return ResponseEntity.ok(productResponse);
     }
+
+    @GetMapping("get/byName/{name}")
+    public ResponseEntity<ProductResponse> getProductByProductName(@PathVariable("name") String productName) {
+        log.info("Received request to get product by name : {}", productName);
+        ProductResponse productResponse = this.service.findProductByProductName(productName);
+        log.info("Product found with name {}", productName);
+        return ResponseEntity.ok(productResponse);
+    }
+
     @DeleteMapping("/delete/byId/{id}")
     public ResponseEntity<String> deleteProductById(@PathVariable("id") Long productId){
         log.info("Received request to delete product with ID: {}", productId);

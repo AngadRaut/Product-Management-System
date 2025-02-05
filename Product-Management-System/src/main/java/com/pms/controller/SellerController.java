@@ -25,15 +25,15 @@ public class SellerController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addSeller(@Valid @RequestBody Seller seller, BindingResult result){
-        log.info("Received request to add seller : {}", seller);
+        log.info("Received request to add seller.");
         // Validate the input
         if (result.hasErrors()) {
             log.warn("Validation failed for saving seller request: {}", result.getAllErrors());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid input.");
         }
         Seller seller1 = this.service.saveSeller(seller);
-        log.info("Seller successfully added in records : {}", seller1);
-        return ResponseEntity.status(HttpStatus.CREATED).body("New Seller adder in records!!"+seller1);
+        log.info("Seller successfully added in records sellerId : {}",seller1.getSellerId());
+        return ResponseEntity.status(HttpStatus.CREATED).body("New Seller adder in records , sellerId:"+seller1.getSellerId());
     }
     // find product by id
     @GetMapping("/get/byId/{id}")
@@ -42,6 +42,15 @@ public class SellerController {
         Seller category = service.findSellerById(sellerId);
         log.info("Seller with ID: {} found successfully!", sellerId);
         return ResponseEntity.ok(category);
+    }
+
+    // find category by name
+    @GetMapping("/get/name/{name}")
+    public ResponseEntity<?> findSellerBySellerName(@PathVariable("name")String sellerName){
+        log.info("Received request to fetch category with name: {}", sellerName);
+        Seller sellerByName = service.findSellerBySellerName(sellerName);
+        log.info("Successfully retrieved category data of sellerName: {}", sellerName);
+        return ResponseEntity.ok(sellerByName);
     }
 
     // get all seller

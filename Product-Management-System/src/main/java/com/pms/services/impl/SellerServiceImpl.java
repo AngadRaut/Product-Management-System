@@ -52,4 +52,15 @@ public class SellerServiceImpl implements SellerService {
         sellerRepository.delete(seller);
         log.info("Seller with provided ID deleted successfully.");
     }
+
+    @Override
+    public Seller findSellerBySellerName(String sellerName) {
+        log.info("Fetching Seller by name: {}", sellerName);
+        Seller seller = sellerRepository.findSellerBySellerName(sellerName)
+                .orElseThrow(() -> {
+                    log.warn("Seller with name {} not found.", sellerName);
+                    return new ResourceNotFoundException("Seller with name " + sellerName + " is not present in the record.");
+                });
+        return seller;
+    }
 }

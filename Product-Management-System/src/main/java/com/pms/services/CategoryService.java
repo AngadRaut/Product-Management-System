@@ -10,4 +10,5 @@ public interface CategoryService {
     public Category findCategoryById(Long categoryId);
     public List<Category> findAllCategory();
     public void deleteCategoryById(Long categoryId);
+    public Category findCategoryByName(String categoryName);
 }
