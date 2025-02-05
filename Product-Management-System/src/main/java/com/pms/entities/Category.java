@@ -70,4 +70,17 @@ public class Category {
     public void setProduct(List<Product> product) {
         this.product = product;
     }
+
+    // toString method
+
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "product=" + product +
+                ", description='" + description + '\'' +
+                ", name='" + name + '\'' +
+                ", categoryId=" + categoryId +
+                '}';
+    }
 }

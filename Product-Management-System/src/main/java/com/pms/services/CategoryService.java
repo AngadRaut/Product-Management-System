@@ -7,9 +7,7 @@ import java.util.Optional;
 
 public interface CategoryService {
     public Category saveCategory(Category category);
-    public Optional<Category> findCategoryById(Long categoryId);
-    public Category findCategoryByBankName(String categoryName);
-    public Category updateCategory(Category category,Long categoryId);
+    public Category findCategoryById(Long categoryId);
     public List<Category> findAllCategory();
     public void deleteCategoryById(Long categoryId);
 }

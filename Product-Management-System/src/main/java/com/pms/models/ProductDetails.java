@@ -7,11 +7,13 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 @Document(collection = "product_details")
 public class ProductDetails {
+
     @Id
     @NotNull(message = "Product details ID cannot be null.")
     private String productDetailsId;
@@ -189,5 +191,25 @@ public class ProductDetails {
 
     public void setQuantity(@NotNull(message = "Quantity cannot be null.") @Positive(message = "Quantity must be a positive number.") Integer quantity) {
         this.quantity = quantity;
+    }
+    // toString
+    @Override
+    public String toString() {
+        return "ProductDetails{" +
+                "productDetailsId='" + productDetailsId + '\'' +
+                ", productId=" + productId +
+                ", description='" + description + '\'' +
+                ", images=" + Arrays.toString(images) +
+                ", specifications=" + specifications +
+                ", usageInstructions='" + usageInstructions + '\'' +
+                ", customerFAQ=" + customerFAQ +
+                ", materialType='" + materialType + '\'' +
+                ", warrantyInfo='" + warrantyInfo + '\'' +
+                ", countryOfOrigin='" + countryOfOrigin + '\'' +
+                ", sizes=" + sizes +
+                ", highlights=" + highlights +
+                ", features=" + features +
+                ", quantity=" + quantity +
+                '}';
     }
 }

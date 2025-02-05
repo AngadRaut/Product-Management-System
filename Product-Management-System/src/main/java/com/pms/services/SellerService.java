@@ -8,9 +8,7 @@ import java.util.Optional;
 
 public interface SellerService {
     public Seller saveSeller(Seller seller);
-    public Optional<Seller> findSellerById(Long sellerId);
-    public Seller findSellerBySellerName(String sellerName);
-    public Seller updateseller(Seller seller,Long sellerId);
+    public Seller findSellerById(Long sellerId);
     public List<Seller> findAllSeller();
     public void deleteSellerById(Long sellerId);
 }

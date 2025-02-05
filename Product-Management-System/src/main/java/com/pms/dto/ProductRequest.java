@@ -3,6 +3,7 @@ package com.pms.dto;
 import com.pms.entities.Category;
 import com.pms.entities.Seller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ public class ProductRequest {
     private String madeIn;
 
     // productDetails field
+    private String productDetailsId;
     private String description;
     private Byte[] images;
     private Map<String, String> specifications;
@@ -35,8 +37,17 @@ public class ProductRequest {
     public ProductRequest() {
     }
 
-    public ProductRequest(String productName, String brandName, Double price, String warrantyDetails, Integer stock, Seller seller, Category category, String madeIn, String description, Byte[] images, Map<String, String> specifications, String usageInstructions, List<Map<String, String>> customerFAQ, String materialType, String warrantyInfo, String countryOfOrigin, List<String> sizes, List<String> highlights, List<String> features, Integer quantity) {
+    public String getProductDetailsId() {
+        return productDetailsId;
+    }
+
+    public void setProductDetailsId(String productDetailsId) {
+        this.productDetailsId = productDetailsId;
+    }
+
+    public ProductRequest(String productDetailsId, String productName, String brandName, Double price, String warrantyDetails, Integer stock, Seller seller, Category category, String madeIn, String description, Byte[] images, Map<String, String> specifications, String usageInstructions, List<Map<String, String>> customerFAQ, String materialType, String warrantyInfo, String countryOfOrigin, List<String> sizes, List<String> highlights, List<String> features, Integer quantity) {
         this.productName = productName;
+        this.productDetailsId=productDetailsId;
         this.brandName = brandName;
         this.price = price;
         this.warrantyDetails = warrantyDetails;
@@ -216,5 +227,33 @@ public class ProductRequest {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    // toString
+    @Override
+    public String toString() {
+        return "ProductRequest{" +
+                "productDetailsId='" + productDetailsId + '\'' +
+                "productName='" + productName + '\'' +
+                ", brandName='" + brandName + '\'' +
+                ", price=" + price +
+                ", warrantyDetails='" + warrantyDetails + '\'' +
+                ", stock=" + stock +
+                ", seller=" + seller +
+                ", category=" + category +
+                ", madeIn='" + madeIn + '\'' +
+                ", description='" + description + '\'' +
+                ", images=" + Arrays.toString(images) +
+                ", specifications=" + specifications +
+                ", usageInstructions='" + usageInstructions + '\'' +
+                ", customerFAQ=" + customerFAQ +
+                ", materialType='" + materialType + '\'' +
+                ", warrantyInfo='" + warrantyInfo + '\'' +
+                ", countryOfOrigin='" + countryOfOrigin + '\'' +
+                ", sizes=" + sizes +
+                ", highlights=" + highlights +
+                ", features=" + features +
+                ", quantity=" + quantity +
+                '}';
     }
 }
