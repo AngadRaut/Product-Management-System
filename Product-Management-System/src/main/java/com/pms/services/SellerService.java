@@ -12,4 +12,5 @@ public interface SellerService {
     public List<Seller> findAllSeller();
     public void deleteSellerById(Long sellerId);
     public Seller findSellerBySellerName(String sellerName);
+    public void updateSeller(Long sellerId,Seller seller);
 }

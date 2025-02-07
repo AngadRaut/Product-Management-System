@@ -11,4 +11,5 @@ public interface CategoryService {
     public List<Category> findAllCategory();
     public void deleteCategoryById(Long categoryId);
     public Category findCategoryByName(String categoryName);
+    public void updateCategory(Long categoryId,Category categoryName);
 }

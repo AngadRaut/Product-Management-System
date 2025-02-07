@@ -67,6 +67,7 @@ public class PostgresqlDbConfig {
         lc.setPersistenceUnitName("postgresqlPersistenceUnit");
         return lc;
     }
+
     //transaction
     @Bean
     public PlatformTransactionManager postgresqlTransactionManager( @Autowired LocalContainerEntityManagerFactoryBean postgresqlLocalFactoryBean){

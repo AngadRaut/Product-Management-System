@@ -13,11 +13,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/product")
 public class ProductRequestController {
-
     private static final Logger log = LoggerFactory.getLogger(ProductRequestController.class);
 
     private ProductAndProductDetailsService service;
@@ -27,15 +27,15 @@ public class ProductRequestController {
         this.service = service;
     }
 
-
     @PostMapping("/add")
     public ResponseEntity<?> add(@Valid @RequestBody ProductRequest productRequest, BindingResult result){
         log.info("Received request to add product.");
 
+
         // Validate the input
         if (result.hasErrors()) {
             log.warn("Validation failed for product request:{}",result.getAllErrors());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Invalid input.", "errors", result.getAllErrors()).toString());
         }
         String string = this.service.saveProductAndProductDetails(productRequest);
         log.info("Product successfully added with response.");
@@ -43,7 +43,7 @@ public class ProductRequestController {
     }
 
     @GetMapping("get/byId/{id}")
-    public ResponseEntity<ProductResponse> getProductById(@PathVariable("id") Long productId) {
+    public ResponseEntity<?> getProductById(@PathVariable("id") Long productId) {
         log.info("Received request to get product by ID: {}", productId);
         ProductResponse productResponse = this.service.findProductById(productId);
         log.info("Product found with ID {}", productId);
@@ -51,7 +51,7 @@ public class ProductRequestController {
     }
 
     @GetMapping("get/byName/{name}")
-    public ResponseEntity<ProductResponse> getProductByProductName(@PathVariable("name") String productName) {
+    public ResponseEntity<?> getProductByProductName(@PathVariable("name") String productName) {
         log.info("Received request to get product by name : {}", productName);
         ProductResponse productResponse = this.service.findProductByProductName(productName);
         log.info("Product found with name {}", productName);
@@ -59,23 +59,31 @@ public class ProductRequestController {
     }
 
     @DeleteMapping("/delete/byId/{id}")
-    public ResponseEntity<String> deleteProductById(@PathVariable("id") Long productId){
+    public ResponseEntity<?> deleteProductById(@PathVariable("id") Long productId){
         log.info("Received request to delete product with ID: {}", productId);
 
         this.service.deleteProductById(productId);
+
         log.info("Product with ID {} deleted successfully.", productId);
-        return ResponseEntity.status(HttpStatus.OK).body("Product having id "+productId+" deleted successfully.");
+        return ResponseEntity.ok(Map.of("message", "Product deleted successfully", "productId", productId));
     }
+
     @GetMapping("/getAll/product")
-    public ResponseEntity<String> getAllProduct(){
+    public ResponseEntity<?> getAllProduct(){
         log.info("Received request to get all product");
         List<ProductResponse> allProduct = this.service.findAllProduct();
+
+        if (allProduct.isEmpty()) {
+            log.warn("No product found in the database.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "No Product found."));
+        }
+
         log.info("Product from records  fetched successfully:{}", allProduct.size());
-        return ResponseEntity.status(HttpStatus.OK).body("resource found successfully : "+allProduct.size()+"\n"+allProduct);
+        return ResponseEntity.status(HttpStatus.OK).body(allProduct);
     }
     @PutMapping("/update/byId/{id}")
-    public ResponseEntity<String> updateProductAndDetails(@Valid @RequestBody ProductRequest productRequest,BindingResult result,@PathVariable("id") Long productId){
-        log.info("Received request to update product: {}", productRequest);
+    public ResponseEntity<?> updateProductAndDetails(@Valid @RequestBody ProductRequest productRequest,BindingResult result,@PathVariable("id") Long productId){
+        log.info("Received request to update product: productId {}", productId);
 
         // Validate the input
         if (result.hasErrors()) {

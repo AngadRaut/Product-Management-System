@@ -31,6 +31,7 @@ public class Product {
     @Column(name = "warranty_details")
     private String warrantyDetails;
 
+    @Column(name = "made_in")
     private String madeIn;
 
     @NotNull(message = "Stock is required")

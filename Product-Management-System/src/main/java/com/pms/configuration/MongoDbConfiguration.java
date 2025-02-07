@@ -30,8 +30,9 @@ public class MongoDbConfiguration {
     public MongoDatabaseFactory mongoDatabaseFactory() {
         return new SimpleMongoClientDatabaseFactory(mongoClient(), environment.getProperty("spring.data.mongodb.database"));
     }
-        @Bean
-        public MongoTemplate mongoTemplate(MongoClient mongoClient) {
-            return new MongoTemplate(mongoDatabaseFactory());
-        }
+
+    @Bean
+    public MongoTemplate mongoTemplate(MongoClient mongoClient) {
+        return new MongoTemplate(mongoDatabaseFactory());
+    }
 }

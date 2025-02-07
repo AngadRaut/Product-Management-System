@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface ProductDetailsRepository extends MongoRepository<ProductDetails,Long> {
     public Optional<ProductDetails> findProductDetailsByProductId(Long productId);
     public void deleteProjectDetailsByProductId(Long productId);
-    public Optional<ProductDetails> findProductDetailsByProductDetailsId(String productDetailsId);
+//    public Optional<ProductDetails> findProductDetailsByProductDetailsId(String productDetailsId);
 }

@@ -19,7 +19,6 @@ import java.util.Optional;
 
 @Service
 public class ProductAndProductDetailsServiceImpl implements ProductAndProductDetailsService {
-
     private static final Logger log = LoggerFactory.getLogger(ProductAndProductDetailsServiceImpl.class);
 
     @Autowired
@@ -30,7 +29,7 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
 
     @Override
     public String saveProductAndProductDetails(ProductRequest productRequest) {
-        log.info("Received request to add product: {}", productRequest);
+        log.info("Received request to add product!");
         // saving the product
         Product product = new Product();
         product.setProductName(productRequest.getProductName());
@@ -86,6 +85,7 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
                     .map(details -> new ProductResponse(product, details))
                     .orElse(null);
         }).filter(Objects::nonNull).toList();
+
         log.info("Returning {} product responses.", productResponses.size());
         return productResponses;
     }
@@ -136,7 +136,7 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
         log.info("Received request to delete product by ID: {}", productId);
         Optional<Product> byId = this.productRepository.findById(productId);
         Optional<ProductDetails> productDetailsByProductId = this.productDetailsRepository.findProductDetailsByProductId(productId);
-        if(byId.isEmpty() && productDetailsByProductId.isEmpty()){
+        if(byId.isEmpty() || productDetailsByProductId.isEmpty()){
             log.warn("Product or product details not found for ID: {}", productId);
             throw new ResourceNotFoundException("Product having id "+productId+" is not present in the records.");
         }else {
@@ -149,7 +149,7 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
 
     @Override
     public void updateProductById(Long productId, ProductRequest productRequest) {
-        log.info("Received request to update product: {}", productRequest);
+        log.info("Received request to update product : {}", productId);
         Optional<Product> productById = this.productRepository.findById(productId);
 
         if(productById.isEmpty()){
@@ -185,6 +185,7 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
 
         // Check If productDetailsId Exists Before Updating
         String productDetailsId = productDetails.getProductDetailsId();
+
         // verify that productDetailsId is not null before using it
         if (productDetailsId == null) {
             log.error("ProductDetailsId is null for productId: {}", productId);
@@ -194,6 +195,7 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
         // if ProductDetails primary key is not null then print it through log
         log.info("ProductDetails primary key  productDetailsId - {} : ",productId);
         productDetailsRepository.deleteProjectDetailsByProductId(productId);
+
         productDetails.setProductDetailsId(productDetailsId);
         productDetails.setProductId(productId);
         productDetails.setDescription(productRequest.getDescription());

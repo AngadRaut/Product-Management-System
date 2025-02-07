@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-
     private static final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
     @Autowired
@@ -51,8 +50,8 @@ public class CategoryServiceImpl implements CategoryService {
                     return new ResourceNotFoundException("Category with ID " + categoryId + " is not present in the record.");
                 });
 
-        categoryRepository.delete(category);
         log.info("Category with ID {} deleted successfully.", categoryId);
+        categoryRepository.delete(category);
     }
 
     @Override
@@ -63,6 +62,26 @@ public class CategoryServiceImpl implements CategoryService {
                     log.warn("Category with name {} not found.", categoryName);
                     return new ResourceNotFoundException("Category with name " + categoryName + " is not present in the record.");
                 });
+        log.info("Category with name {} returned successfully!.", categoryName);
         return category;
+    }
+
+    @Override
+    public void updateCategory(Long categoryId, Category category) {
+        log.info("Update category by id: {}", categoryId);
+        Category category1 = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> {
+                    log.warn("Category with id {} not found.", categoryId);
+                    return new ResourceNotFoundException("Category with id " + categoryId + " is not present in the record.");
+                });
+
+        category1.setCategoryId(categoryId);
+        category1.setName(category.getName());
+        category1.setDescription(category.getDescription());
+        category1.setProduct(category.getProduct());
+        log.debug("Updating category with id: {} and name: {}", category1.getCategoryId(), category1.getName());
+
+        this.categoryRepository.save(category1);
+        log.info("Category updated successfully.");
     }
 }

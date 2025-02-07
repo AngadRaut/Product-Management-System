@@ -48,6 +48,18 @@ public class Seller {
     @JsonManagedReference
     private List<Product> product;
 
+    @Version
+    @Column(name = "version")
+    private Long version;  // Optimistic Locking version field
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     // no arg constructor
     public Seller() {
     }

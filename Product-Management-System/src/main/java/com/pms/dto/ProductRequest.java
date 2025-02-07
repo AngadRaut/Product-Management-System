@@ -9,7 +9,9 @@ import java.util.Map;
 
 
 public class ProductRequest {
+
     // product fields
+    private Long productId;
     private String productName;
     private String brandName;
     private Double price;
@@ -67,6 +69,40 @@ public class ProductRequest {
         this.highlights = highlights;
         this.features = features;
         this.quantity = quantity;
+    }
+
+    // use following constructor for tests
+    public ProductRequest(Long productId, String productName, String brandName, Double price, String warrantyDetails, Integer stock, Seller seller, Category category, String madeIn, String productDetailsId, String description, Byte[] images, Map<String, String> specifications, String usageInstructions, List<Map<String, String>> customerFAQ, String materialType, String warrantyInfo, String countryOfOrigin, List<String> sizes, List<String> highlights, List<String> features, Integer quantity) {
+        this.productId = productId;
+        this.productName = productName;
+        this.brandName = brandName;
+        this.price = price;
+        this.warrantyDetails = warrantyDetails;
+        this.stock = stock;
+        this.seller = seller;
+        this.category = category;
+        this.madeIn = madeIn;
+        this.productDetailsId = productDetailsId;
+        this.description = description;
+        this.images = images;
+        this.specifications = specifications;
+        this.usageInstructions = usageInstructions;
+        this.customerFAQ = customerFAQ;
+        this.materialType = materialType;
+        this.warrantyInfo = warrantyInfo;
+        this.countryOfOrigin = countryOfOrigin;
+        this.sizes = sizes;
+        this.highlights = highlights;
+        this.features = features;
+        this.quantity = quantity;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
     public String getProductName() {
