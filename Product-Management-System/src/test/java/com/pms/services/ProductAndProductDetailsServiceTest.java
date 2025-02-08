@@ -39,8 +39,6 @@ public class ProductAndProductDetailsServiceTest {
     private Product mockProduct;
     private ProductDetails mockProductDetails;
 
-
-
     @BeforeEach
     public void setUp(){
         // Prepare a sample ProductRequest
@@ -143,6 +141,24 @@ public class ProductAndProductDetailsServiceTest {
     }
 
     @Test
+    public void findProductByProductNameTest() {
+        // Mock product and productDetails
+        Mockito.when(productRepository.findProductByProductName("Washing Machine")).thenReturn(Optional.of(mockProduct));
+        Mockito.when(productDetailsRepository.findProductDetailsByProductId(1L)).thenReturn(Optional.of(mockProductDetails));
+
+        // Execute method
+        ProductResponse productResponse = service.findProductByProductName("Washing Machine");
+
+        // Assertions
+        Assertions.assertNotNull(productResponse, "ProductResponse should not be null");
+        Assertions.assertEquals("Washing Machine", productResponse.getProduct().getProductName(), "Product name should be 1");
+        Assertions.assertEquals("PD789", productResponse.getProductDetails().getProductDetailsId(), "ProductDetails ID should be PD789");
+
+        // Verify repository calls
+        Mockito.verify(productRepository, times(1)).findById(1L);
+        Mockito.verify(productDetailsRepository, times(1)).findProductDetailsByProductId(1L);
+    }
+    @Test
     public void findProductByIdTest() {
         // Mock product and productDetails
         Mockito.when(productRepository.findById(1L)).thenReturn(Optional.of(mockProduct));
@@ -159,5 +175,38 @@ public class ProductAndProductDetailsServiceTest {
         // Verify repository calls
         Mockito.verify(productRepository, times(1)).findById(1L);
         Mockito.verify(productDetailsRepository, times(1)).findProductDetailsByProductId(1L);
+    }
+    @Test
+    public void updateProductAndProductDetailsTest() {
+        Long productId = 1L;
+
+        // Mock existing product and product details
+        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
+        Mockito.when(productDetailsRepository.findProductDetailsByProductId(productId)).thenReturn(Optional.of(mockProductDetails));
+
+        // Mock save behavior
+        Mockito.when(productRepository.save(any(Product.class))).thenReturn(mockProduct);
+        Mockito.when(productDetailsRepository.save(any(ProductDetails.class))).thenReturn(mockProductDetails);
+
+        // Execute update method
+        service.updateProductById(productId, productRequest);
+
+        Mockito.verify(productRepository, times(1)).save(any(Product.class));
+        Mockito.verify(productDetailsRepository, times(1)).save(any(ProductDetails.class));
+    }
+
+    @Test
+    public void deleteProductAndProductDetailsTest() {
+        Long productId = 1L;
+        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
+
+        Mockito.when(productDetailsRepository.findProductDetailsByProductId(productId))
+                .thenReturn(Optional.of(mockProductDetails));
+
+        service.deleteProductById(productId);
+
+        Mockito.verify(productRepository, times(1)).findById(productId);
+        Mockito.verify(productDetailsRepository, times(1)).findProductDetailsByProductId(productId);
+        Mockito.verify(productRepository, times(1)).deleteById(productId); // Corrected verification
     }
 }

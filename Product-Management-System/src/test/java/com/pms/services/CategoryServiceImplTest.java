@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
 
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class CategoryServiceImplTest {
@@ -43,10 +43,10 @@ public class CategoryServiceImplTest {
         categoryList = Arrays.asList(new Category(1L, "Sample Product", "Sample product description", null)
                 ,new Category(2L, "Sample Product222", "Sample product description222", null));
 
-        Mockito.when(this.categoryRepository.save(category.get())).thenReturn(category.get());
-        Mockito.when(this.categoryRepository.findById(1L)).thenReturn(category);
-        Mockito.when(this.categoryRepository.findAll()).thenReturn(categoryList);
-        Mockito.when(this.categoryRepository.findCategoryByName("Sample Product")).thenReturn(category);
+        when(this.categoryRepository.save(category.get())).thenReturn(category.get());
+        when(this.categoryRepository.findById(1L)).thenReturn(category);
+        when(this.categoryRepository.findAll()).thenReturn(categoryList);
+        when(this.categoryRepository.findCategoryByName("Sample Product")).thenReturn(category);
 
         existingCategory = new  Category(
                 78L,
@@ -61,17 +61,14 @@ public class CategoryServiceImplTest {
                 "Category for electronic devices",
                 null // Assuming no associated products initially
         );
-        Mockito.when(categoryRepository.findById(78L)).thenReturn(Optional.of(existingCategory));
-        Mockito.when(categoryRepository.save(any(Category.class))).thenReturn(updatedCategory);
+        when(categoryRepository.findById(78L)).thenReturn(Optional.of(existingCategory));
+        when(categoryRepository.save(any(Category.class))).thenReturn(updatedCategory);
 
         categoryService.updateCategory(78L, updatedCategory);
     }
 
     @Test
     public void saveCategoryTest(){
-       /* Category category1 = this.categoryService.saveCategory(category.get());
-        Assertions.assertEquals(category.get(),category1);*/
-
         Category savedCategory = categoryService.saveCategory(category.get());
 
         Assertions.assertEquals(updatedCategory.getName(), savedCategory.getName());
@@ -114,21 +111,29 @@ public class CategoryServiceImplTest {
         Assertions.assertThrows(ResourceNotFoundException.class,()->categoryService.findCategoryByName("nana"));
     }
 
-    @Test
-    public void deleteCategoryByIdTest(){
-        categoryService.deleteCategoryById(1L);
-        Mockito.verify(categoryRepository,Mockito.times(2)).deleteById(1L);
-      /*  Category categoryById1 = this.categoryService.findCategoryById(1L);
+  @Test
+  public void deleteCategoryByIdTest() {
+      // Arrange
+      Long categoryId = 1L;
+      Category category = new Category(categoryId, "Sample Product", "Sample product description", null);
 
-        Assertions.assertEquals(null,categoryById1);*/
-//        Assertions.assertNull(categoryById1);
-//        Assertions.assertThrows(ResourceNotFoundException.class,()->categoryService.findCategoryById(1L));
-    }
+      // Mock repository behavior
+      when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+      doNothing().when(categoryRepository).delete(category);
+
+      // Act
+      categoryService.deleteCategoryById(categoryId);
+
+      // Assert
+      verify(categoryRepository, times(1)).findById(categoryId);
+      verify(categoryRepository, times(1)).delete(category);
+
+  }
 
     @Test
     public void updateCategoryTest(){
-        Mockito.verify(categoryRepository,Mockito.times(1)).findById(78L);
-        Mockito.verify(categoryRepository,Mockito.times(1)).save(any(Category.class));
+        verify(categoryRepository, times(1)).findById(78L);
+        verify(categoryRepository, times(1)).save(any(Category.class));
 
         Assertions.assertEquals("Electronics",existingCategory.getName());
         Assertions.assertEquals("Category for electronic devices",existingCategory.getDescription());

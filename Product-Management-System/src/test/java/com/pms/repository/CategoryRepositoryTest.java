@@ -38,7 +38,6 @@ public class CategoryRepositoryTest {
         Assertions.assertEquals(category.getCategoryId(),category1.getCategoryId());
         Assertions.assertEquals(category.getName(),category1.getName());
         Assertions.assertEquals(category.getDescription(),category1.getDescription());
-
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.pms.controllers;
 
 import com.pms.controller.CategoryController;
+import com.pms.custom_exceptions.ResourceNotFoundException;
 import com.pms.entities.Category;
 import com.pms.services.impl.CategoryServiceImpl;
 import org.junit.jupiter.api.Assertions;
@@ -8,21 +9,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class CategoryControllerTest {
@@ -31,9 +28,6 @@ public class CategoryControllerTest {
 
     @Mock
     private BindingResult bindingResult;
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @InjectMocks
     private CategoryController categoryController;
@@ -77,11 +71,101 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void getCategoryByIdTest(){
-        Category categoryById = categoryService.findCategoryById(56L);
+    public void addCategory_ValidationFailureTest() {
+        Category invalidCategory = new Category();
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        when(bindingResult.getAllErrors()).thenReturn(List.of(new ObjectError("category", "Invalid input")));
 
-        
-
+        ResponseEntity<String> response = categoryController.addCategory(invalidCategory, bindingResult);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertTrue(response.getBody().contains("Invalid input."));
     }
 
+    @Test
+    public void getCategoryByIdTest(){
+        Category categoryById = categoryService.findCategoryById(56L);
+        assertNotNull(categoryById);
+        assertEquals(category.get(),categoryById);
+        assertEquals(category.get().getCategoryId(),categoryById.getCategoryId());
+        assertEquals(category.get().getDescription(),categoryById.getDescription());
+        assertEquals(category.get().getName(),categoryById.getName());
+    }
+   @Test
+   public void getCategoryById_NegativeTest() {
+       Long categoryId = 54L;
+       Mockito.when(categoryService.findCategoryById(categoryId))
+               .thenThrow(new ResourceNotFoundException("Category with ID " + categoryId + " not found"));
+
+       ResponseEntity<?> response = categoryController.getCategoryById(categoryId);
+       assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+       assertTrue(response.getBody().toString().contains("error"));
+       assertTrue(response.getBody().toString().contains("Category with ID " + categoryId + " not found"));
+   }
+    @Test
+    void testGetAllCategories_ReturnsCategories() {
+        Mockito.when(categoryService.findAllCategory()).thenReturn(categoryList);
+
+        ResponseEntity<?> response = categoryController.getAllCategories();
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody() instanceof List);
+
+        List<Category> actualCategories = (List<Category>) response.getBody();
+        assertEquals(2, actualCategories.size());
+        assertEquals("Sample Product", actualCategories.get(0).getName());
+        assertEquals("Sample Product222", actualCategories.get(1).getName());
+
+        Mockito.verify(categoryService, times(1)).findAllCategory();
+    }
+
+  /*  @Test
+    void testGetAllCategories_ReturnsNotFound_WhenNoCategoriesExist() {
+        Mockito.when(categoryService.findAllCategory()).thenReturn(Collections.emptyList());
+        ResponseEntity<?> response = categoryController.getAllCategories();
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertTrue(response.getBody() instanceof Map);
+        Map<String, String> responseMap = (Map<String, String>) response.getBody();
+        assertEquals("No Category found.", responseMap.get("message"));
+        Mockito.verify(categoryService, times(1)).findAllCategory();
+    }*/@Test
+  void testGetAllCategories_ReturnsNotFound_WhenNoCategoriesExist() {
+      Mockito.when(categoryService.findAllCategory()).thenReturn(Collections.emptyList());
+      ResponseEntity<?> response = categoryController.getAllCategories();
+
+      assertNotNull(response);
+      assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+      assertInstanceOf(Map.class, response.getBody());
+      Map<String, String> responseMap = (Map<String, String>) response.getBody();
+      assertEquals("No Category found.", responseMap.get("message"));
+
+      Mockito.verify(categoryService, times(1)).findAllCategory();
+  }
+
+
+    @Test
+    void testDeleteCategoryById_Success() {
+        // Arrange
+        Long categoryId = 1L;
+        Mockito.doNothing().when(categoryService).deleteCategoryById(categoryId);
+
+        // Act
+        ResponseEntity<?> response = categoryController.deleteCategoryById(categoryId);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertInstanceOf(Map.class, response.getBody());
+
+        Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+        assertEquals("Category deleted successfully", responseBody.get("message"));
+        assertEquals(categoryId, responseBody.get("categoryId"));
+
+        // Verify that service method was called once
+        Mockito.verify(categoryService, times(1)).deleteCategoryById(categoryId);
+    }
 }

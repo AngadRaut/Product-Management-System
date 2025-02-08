@@ -26,6 +26,7 @@ public class ProductDetailsRepositoryTest {
 
     @BeforeEach
     public void setUp(){
+
         // Creating a map for specifications
         Map<String, String> specifications = new HashMap<>();
         specifications.put("Color", "Red");
