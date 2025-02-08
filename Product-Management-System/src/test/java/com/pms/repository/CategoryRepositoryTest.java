@@ -28,9 +28,7 @@ public class CategoryRepositoryTest {
     @BeforeEach
     public void setUp(){
         categoryRepository.save(category);
-//        testEntityManager.persistAndFlush(category);
     }
-
     @Test
     @Commit
     public void findCategoryBYCategoryNameTest(){
@@ -39,7 +37,6 @@ public class CategoryRepositoryTest {
         Assertions.assertEquals(category.getName(),category1.getName());
         Assertions.assertEquals(category.getDescription(),category1.getDescription());
     }
-
     @Test
     public void findCategoryByNameNegativeTest(){
         Assertions.assertThrows(ResourceNotFoundException.class,()->{

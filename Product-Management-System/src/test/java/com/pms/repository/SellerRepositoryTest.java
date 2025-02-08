@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class SellerRepositoryTest {
-
     @Autowired
     private SellerRepository sellerRepository;
 
@@ -21,11 +20,8 @@ public class SellerRepositoryTest {
     private TestEntityManager testEntityManager;
 
     Seller seller = new Seller(null,"bhanu","7218997215","bhanu@gmail.com","TDIT",true,"address12345","address9089",null);
-
-
     @BeforeEach
     public void setUp(){
-
         testEntityManager.persistAndFlush(seller);
     }
 
@@ -34,13 +30,11 @@ public class SellerRepositoryTest {
         Seller seller1 = this.sellerRepository.findSellerBySellerName("bhanu").get();
         Assertions.assertEquals(seller.getSellerId(),seller1.getSellerId());
         Assertions.assertEquals(seller.getEmail(),seller1.getEmail());
-
     }
     @Test
     public void findSellerByNameNegativeTest(){
         Assertions.assertThrows(ResourceNotFoundException.class,()->this.sellerRepository.findSellerBySellerName("nana").orElseThrow(()-> new ResourceNotFoundException("not found")));
     }
-
    /* @Test
     public void saveSellerTest(){
         Seller seller = new Seller();

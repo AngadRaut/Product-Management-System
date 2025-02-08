@@ -87,33 +87,27 @@ public class ProductAndProductDetailsServiceTest {
         mockProductDetails.setProductDetailsId("PD789");
         Mockito.when(productRepository.save(any(Product.class))).thenAnswer(invocation -> {
             Product savedProduct = invocation.getArgument(0);
-            savedProduct.setProductId(1L);  // Simulate database-generated ID
+            savedProduct.setProductId(1L);
             return savedProduct;
         });
 
         Mockito.when(productDetailsRepository.save(any(ProductDetails.class))).thenAnswer(invocation -> {
             ProductDetails savedDetails = invocation.getArgument(0);
-            savedDetails.setProductDetailsId("PD789"); // Simulate assigned ID
+            savedDetails.setProductDetailsId("PD789");
             return savedDetails;
         });
         String result = service.saveProductAndProductDetails(productRequest);
-
-
         Assertions.assertEquals("Product and Product Details created successfully: Product ID - 1, Product Details ID - PD789", result);
-
-
         Mockito.verify(productRepository, times(1)).save(any(Product.class));
         Mockito.verify(productDetailsRepository, times(1)).save(any(ProductDetails.class));
     }
     @Test
     public void findAllProductTest() {
-        // Mock Products
         Product product1 = new Product(1L, "Washing Machine", "Samsung", 499.99,
                 "2 Years Warranty", "South Korea", 50, null, null);
         Product product2 = new Product(2L, "Smartphone", "Apple", 999.99,
                 "1 Year Warranty", "USA", 100, null, null);
 
-        // Mock ProductDetails
         ProductDetails productDetails1 = new ProductDetails("PD789", 1L,
                 "Front-load washing machine", null, null, "Use as per manual",
                 null, "Steel", "2 Years", "South Korea", null, null, null, 10);
@@ -124,37 +118,28 @@ public class ProductAndProductDetailsServiceTest {
         List<Product> products = Arrays.asList(product1, product2);
         List<ProductDetails> productDetails = Arrays.asList(productDetails1, productDetails2);
 
-        // Mock repository behavior
         Mockito.when(productRepository.findAll()).thenReturn(products);
         Mockito.when(productDetailsRepository.findAll()).thenReturn(productDetails);
 
-        // Execute method
         List<ProductResponse> productResponses = service.findAllProduct();
 
-        // Assertions
         Assertions.assertNotNull(productResponses);
         Assertions.assertEquals(2, productResponses.size(), "Should return 2 product responses");
 
-        // Verify repository calls
         Mockito.verify(productRepository, times(1)).findAll();
         Mockito.verify(productDetailsRepository, times(1)).findAll();
     }
 
     @Test
     public void findProductByProductNameTest() {
-        // Mock product and productDetails
         Mockito.when(productRepository.findProductByProductName("Washing Machine")).thenReturn(Optional.of(mockProduct));
         Mockito.when(productDetailsRepository.findProductDetailsByProductId(1L)).thenReturn(Optional.of(mockProductDetails));
-
-        // Execute method
         ProductResponse productResponse = service.findProductByProductName("Washing Machine");
 
-        // Assertions
         Assertions.assertNotNull(productResponse, "ProductResponse should not be null");
         Assertions.assertEquals("Washing Machine", productResponse.getProduct().getProductName(), "Product name should be 1");
         Assertions.assertEquals("PD789", productResponse.getProductDetails().getProductDetailsId(), "ProductDetails ID should be PD789");
 
-        // Verify repository calls
         Mockito.verify(productRepository, times(1)).findById(1L);
         Mockito.verify(productDetailsRepository, times(1)).findProductDetailsByProductId(1L);
     }

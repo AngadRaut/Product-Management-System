@@ -14,20 +14,14 @@ import java.util.*;
 
 @DataMongoTest
 @ContextConfiguration(classes = MongoDbConfiguration.class) // Ensure MongoDB config is loaded
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ProductDetailsRepositoryTest {
     @Autowired
     private ProductDetailsRepository productDetailsRepository;
 
-  /*  @Autowired
-    private TestEntityManager testEntityManager;
-*/
     ProductDetails productDetails;
 
     @BeforeEach
     public void setUp(){
-
-        // Creating a map for specifications
         Map<String, String> specifications = new HashMap<>();
         specifications.put("Color", "Red");
         specifications.put("Weight", "500g");
@@ -37,7 +31,6 @@ public class ProductDetailsRepositoryTest {
                 Map.of("question", "Is it washable?", "answer", "Yes, it is machine washable.")
         );
 
-        // Creating lists for sizes, highlights, and features
         List<String> sizes = Arrays.asList("S", "M", "L");
         List<String> highlights = Arrays.asList("Lightweight", "Breathable");
         List<String> features = Arrays.asList("Durable", "Eco-friendly");
@@ -72,25 +65,20 @@ public class ProductDetailsRepositoryTest {
         Assertions.assertEquals(productDetails.getQuantity(),productDetails1.getQuantity());
         Assertions.assertEquals(productDetails.getCountryOfOrigin(),productDetails1.getCountryOfOrigin());
     }
-
     @Test
     public void findProductDetailsByProductId_NotFoundTest(){
         Assertions.assertThrows(ResourceNotFoundException.class,
                 ()->productDetailsRepository.findProductDetailsByProductId(10L)
                         .orElseThrow(()->new ResourceNotFoundException("not found")));
     }
-
     @Test
     public void deleteProjectDetailsByProductIdTest(){
-
-        // Ensure the product exists before deletion
         Optional<ProductDetails> beforeDelete = productDetailsRepository.findProductDetailsByProductId(100L);
         Assertions.assertTrue(beforeDelete.isPresent(), "Product should exist before deletion");
 
-        // Call delete method
         productDetailsRepository.deleteProjectDetailsByProductId(100L);
 
-        // Verify deletion
+        // Verify delete
         Optional<ProductDetails> afterDelete = productDetailsRepository.findProductDetailsByProductId(100L);
         Assertions.assertFalse(afterDelete.isPresent(), "Product should be deleted");
 

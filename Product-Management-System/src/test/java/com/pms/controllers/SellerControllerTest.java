@@ -52,7 +52,7 @@ public class SellerControllerTest {
                 true,
                 "address12345",
                 "address9089",
-                null // Assuming no products are assigned initially
+                null
         ),new Seller(
                 99L,
                 "Alice Smith",
@@ -62,10 +62,8 @@ public class SellerControllerTest {
                 false,  // Not verified yet
                 "456 Market Road, Los Angeles",
                 "Building 5A",
-                null // No products assigned initially
+                null
         ));
-
-
         when(service.saveSeller(seller.get())).thenReturn(seller.get());
         when(service.findSellerBySellerName("Electrical1")).thenReturn(seller.get());
         when(this.service.findAllSeller()).thenReturn(sellerList);
@@ -75,17 +73,13 @@ public class SellerControllerTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         when(bindingResult.getAllErrors()).thenReturn(errors);
     }
-
     @Test
     void testDeleteSellerById_Success() {
-        // Arrange
         Long sellerId = 1L;
         Mockito.doNothing().when(service).deleteSellerById(sellerId);
 
-        // Act
         ResponseEntity<?> response = sellerController.deleteSellerById(sellerId);
 
-        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertInstanceOf(Map.class, response.getBody());
@@ -94,10 +88,8 @@ public class SellerControllerTest {
         assertEquals("Seller deleted successfully", responseBody.get("message"));
         assertEquals(sellerId, responseBody.get("sellerId"));
 
-        // Verify that service method was called once
         Mockito.verify(service, times(1)).deleteSellerById(sellerId);
     }
-
     @Test
     public void addSellerTest(){
         Seller seller1 = service.saveSeller(seller.get());
@@ -142,7 +134,6 @@ public class SellerControllerTest {
 
         Mockito.verify(service, times(1)).findAllSeller();
     }
-
     @Test
     void testGetAllCategories_ReturnsNotFound_WhenNoCategoriesExist() {
         Mockito.when(service.findAllSeller()).thenReturn(Collections.emptyList());

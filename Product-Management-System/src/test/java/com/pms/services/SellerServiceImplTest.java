@@ -69,20 +69,16 @@ public class SellerServiceImplTest {
                 "Building 5A",
                 null // No products assigned initially
         ));
-
         Mockito.when(this.sellerRepository.save(sellerOptional.get())).thenReturn(sellerOptional.get());
         Mockito.when(this.sellerRepository.findById(1L)).thenReturn(sellerOptional);
         Mockito.when(this.sellerRepository.findAll()).thenReturn(sellerList);
         Mockito.when(this.sellerRepository.findSellerBySellerName("John Doe")).thenReturn(sellerOptional);
-
-
 
          existingSeller = new Seller(
                 9L, "John Doe", "9876543210", "johndoe@example.com",
                 "Tech Solutions Ltd.", true, "123 Main Street, New York",
                 "Suite 400", null
         );
-
          updatedSeller = new Seller(
                 6L, "John Smith", "9123456789", "johnsmith@example.com",
                 "Tech Innovations Ltd.", true, "789 Market Street, Chicago",
@@ -90,10 +86,7 @@ public class SellerServiceImplTest {
         );
         Mockito.when(sellerRepository.findById(9L)).thenReturn(Optional.of(existingSeller));
         Mockito.when(sellerRepository.save(any(Seller.class))).thenReturn(updatedSeller);
-
-
     }
-
     @Test
     public void  saveSellerTest(){
         Seller seller = this.sellerService.saveSeller(sellerOptional.get());
@@ -101,7 +94,6 @@ public class SellerServiceImplTest {
         Assertions.assertEquals(updatedSeller,seller);
         Assertions.assertEquals(updatedSeller.getSellerId(),seller.getSellerId());
     }
-
     @Test
     public void  findSellerBySellerNameTest(){
         Seller johnDoe = this.sellerService.findSellerBySellerName("John Doe");
@@ -113,8 +105,6 @@ public class SellerServiceImplTest {
             this.sellerService.findSellerBySellerName("J");
         });
     }
-
-
     @Test
     public void  findSellerByIdTest(){
         Seller sellerById = this.sellerService.findSellerById(1L);
@@ -153,24 +143,20 @@ public class SellerServiceImplTest {
       Seller seller = new Seller(sellerId, "John Smith", "9123456789", "johnsmith@example.com",
               "Tech Innovations Ltd.", true, "789 Market Street, Chicago", "Building 10", null);
       // Mock repository behavior
-      when(sellerRepository.findById(sellerId)).thenReturn(Optional.of(seller)); // Ensure findById() is mocked
-      doNothing().when(sellerRepository).delete(seller); // Ensure delete() is mocked properly
+      when(sellerRepository.findById(sellerId)).thenReturn(Optional.of(seller));
+      doNothing().when(sellerRepository).delete(seller);
       // Act
       sellerService.deleteSellerById(sellerId);
       // Assert
-      verify(sellerRepository, times(1)).findById(sellerId); // Ensure findById() is called
-      verify(sellerRepository, times(1)).delete(seller); // Ensure delete() is called
+      verify(sellerRepository, times(1)).findById(sellerId);
+      verify(sellerRepository, times(1)).delete(seller);
   }
-
-
-
     @Test
     public void  findAllSellerTest(){
         List<Seller> all = this.sellerRepository.findAll();
         Assertions.assertEquals(sellerList,all);
         Assertions.assertEquals(sellerList.size(),all.size());
     }
-
     @Test
     public void updateSellerTest(){
         sellerService.updateSeller(9L, updatedSeller);

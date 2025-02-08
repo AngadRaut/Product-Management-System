@@ -54,7 +54,6 @@ public class CategoryServiceImplTest {
                 "Category for household appliances",
                 null // Assuming no associated products initially
         );
-
         updatedCategory = new Category(
                 79L,
                 "Electronics",
@@ -63,26 +62,21 @@ public class CategoryServiceImplTest {
         );
         when(categoryRepository.findById(78L)).thenReturn(Optional.of(existingCategory));
         when(categoryRepository.save(any(Category.class))).thenReturn(updatedCategory);
-
         categoryService.updateCategory(78L, updatedCategory);
     }
-
     @Test
     public void saveCategoryTest(){
         Category savedCategory = categoryService.saveCategory(category.get());
 
         Assertions.assertEquals(updatedCategory.getName(), savedCategory.getName());
         Assertions.assertEquals(updatedCategory.getDescription(), savedCategory.getDescription());
-
     }
-
     @Test
     public void findAllCategoryTest(){
         List<Category> allCategory = this.categoryService.findAllCategory();
         Assertions.assertEquals(categoryList,allCategory);
         Assertions.assertEquals(categoryList.size(),allCategory.size());
     }
-
     @Test
     public void findCategoryByIdTest(){
         Category categoryById = this.categoryService.findCategoryById(1L);
@@ -90,13 +84,11 @@ public class CategoryServiceImplTest {
         Assertions.assertEquals(category.get().getName(),categoryById.getName());
         Assertions.assertEquals(category.get().getDescription(),categoryById.getDescription());
     }
-
     @Test
     public void saveCategoryTest_NotFound(){
         Assertions.assertThrows(ResourceNotFoundException.class
                 ,()->categoryService.findCategoryById(4L));
     }
-
     @Test
     public void findCategoryByNameTest(){
         Category categoryByName = this.categoryService.findCategoryByName("Sample Product");
@@ -105,29 +97,21 @@ public class CategoryServiceImplTest {
         Assertions.assertEquals(category.get().getCategoryId(),categoryByName.getCategoryId());
         Assertions.assertEquals(category.get().getDescription(),categoryByName.getDescription());
     }
-
     @Test
     public void findCategoryByNameTest_negativeTest(){
         Assertions.assertThrows(ResourceNotFoundException.class,()->categoryService.findCategoryByName("nana"));
     }
-
   @Test
   public void deleteCategoryByIdTest() {
-      // Arrange
       Long categoryId = 1L;
       Category category = new Category(categoryId, "Sample Product", "Sample product description", null);
 
-      // Mock repository behavior
       when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
       doNothing().when(categoryRepository).delete(category);
 
-      // Act
       categoryService.deleteCategoryById(categoryId);
-
-      // Assert
       verify(categoryRepository, times(1)).findById(categoryId);
       verify(categoryRepository, times(1)).delete(category);
-
   }
 
     @Test

@@ -81,26 +81,21 @@ public class ProductRequestControllerTest {
 
         mockProductList = List.of(mockProductResponse);
 
-        // Mock repository behavior
+
         when(service.saveProductAndProductDetails(any(ProductRequest.class))).thenReturn("Product Saved Successfully");
         mockProductResponse = new ProductResponse();
-        /*mockProductResponse.setProduct(mockProduct);
-        mockProductResponse.setProductDetails(mockProductDetails);*/
+
         when(service.findProductById(1L)).thenReturn(mockProductResponse);
         when(service.findProductByProductName("Washing Machine")).thenReturn(mockProductResponse);
         when(service.findAllProduct()).thenReturn(mockProductList);
-
-
-
     }
     @Test
     public void testAddProductSuccess() {
         when(bindingResult.hasErrors()).thenReturn(false);
-
         ResponseEntity<?> response = controller.add(productRequest, bindingResult);
 
-        assertEquals(201, response.getStatusCodeValue());  // Expect HTTP 201 Created
-        assertEquals("Product Saved Successfully", response.getBody());  // Expected response body
+        assertEquals(201, response.getStatusCodeValue());
+        assertEquals("Product Saved Successfully", response.getBody());
     }
     @Test
     public void testFindProductById() {
@@ -112,7 +107,6 @@ public class ProductRequestControllerTest {
 
     @Test
     public void testFindProductByProductName() {
-
         ResponseEntity<?> response = controller.getProductByProductName("Washing Machine");
 
         assertEquals(200, response.getStatusCodeValue());
