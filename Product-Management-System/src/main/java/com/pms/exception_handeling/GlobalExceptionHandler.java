@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        log.error("Data Integrity Violation: Please enter the non duplicate record..");
+        log.error("Data Integrity Violation: Please enter the non duplicate record.."+ex.getMessage());
         // Check if the exception is due to duplicate key violation
         if (ex.getMessage().contains("duplicate key value violates unique constraint")) {
             // Return a custom error message

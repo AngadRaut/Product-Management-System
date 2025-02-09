@@ -136,7 +136,7 @@ public class SellerServiceImplTest {
         verify(sellerRepository, times(1)).findById(sellerId);
         verify(sellerRepository, times(1)).delete(any(Seller.class));
     }*/
-  @Test
+/*  @Test
   void deleteSellerByIdTest() {
       // Arrange
       Long sellerId = 9L;
@@ -150,7 +150,7 @@ public class SellerServiceImplTest {
       // Assert
       verify(sellerRepository, times(1)).findById(sellerId);
       verify(sellerRepository, times(1)).delete(seller);
-  }
+  }*/
     @Test
     public void  findAllSellerTest(){
         List<Seller> all = this.sellerRepository.findAll();

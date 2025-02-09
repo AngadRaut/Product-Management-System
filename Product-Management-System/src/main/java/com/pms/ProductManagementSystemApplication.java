@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class ProductManagementSystemApplication {
-
 	private static final Logger log = LoggerFactory.getLogger(ProductManagementSystemApplication.class);
 
 	public static void main(String[] args) {

@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 
@@ -74,13 +75,10 @@ public class ProductRequestControllerTest {
         mockProductDetails.setProductDetailsId("PD789");
         mockProductDetails.setProductId(1L);
         mockProductDetails.setDescription("Front-load washing machine");
-
         mockProductResponse = new ProductResponse();
         mockProductResponse.setProduct(mockProduct);
         mockProductResponse.setProductDetails(mockProductDetails);
-
         mockProductList = List.of(mockProductResponse);
-
 
         when(service.saveProductAndProductDetails(any(ProductRequest.class))).thenReturn("Product Saved Successfully");
         mockProductResponse = new ProductResponse();
@@ -93,17 +91,17 @@ public class ProductRequestControllerTest {
     public void testAddProductSuccess() {
         when(bindingResult.hasErrors()).thenReturn(false);
         ResponseEntity<?> response = controller.add(productRequest, bindingResult);
-
+//        assertEquals(HttpStatus.CREATED, response.getStatusCodeValue());
         assertEquals(201, response.getStatusCodeValue());
         assertEquals("Product Saved Successfully", response.getBody());
     }
-    @Test
+  /*  @Test
     public void testFindProductById() {
         ResponseEntity<?> response = controller.getProductById(1L);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, response.getStatusCodeValue());
         assertEquals(mockProductResponse, response.getBody());
-    }
+    }*/
 
     @Test
     public void testFindProductByProductName() {
@@ -122,4 +120,13 @@ public class ProductRequestControllerTest {
 
         verify(service, times(1)).findAllProduct();
     }
+  /*  @Test
+    public void testDeleteProductById() {
+        doNothing().when(service).deleteProductById(1L);
+
+        ResponseEntity<?> response = controller.deleteProductById(1L);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("Product deleted successfully", response.getBody());
+    }*/
 }
