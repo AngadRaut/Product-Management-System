@@ -36,8 +36,6 @@ public class SellerController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Seller added successfully, sellerId:"+seller1.getSellerId());
     }
 
-
-
     // find product by id
     @GetMapping("/get/byId/{id}")
     public ResponseEntity<?> getSellerById(@PathVariable("id") Long sellerId) {

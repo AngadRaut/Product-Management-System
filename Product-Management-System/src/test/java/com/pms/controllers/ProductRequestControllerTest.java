@@ -95,13 +95,13 @@ public class ProductRequestControllerTest {
         assertEquals(201, response.getStatusCodeValue());
         assertEquals("Product Saved Successfully", response.getBody());
     }
-  /*  @Test
+    @Test
     public void testFindProductById() {
         ResponseEntity<?> response = controller.getProductById(1L);
 
-        assertEquals(HttpStatus.OK, response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(mockProductResponse, response.getBody());
-    }*/
+    }
 
     @Test
     public void testFindProductByProductName() {
@@ -120,13 +120,16 @@ public class ProductRequestControllerTest {
 
         verify(service, times(1)).findAllProduct();
     }
-  /*  @Test
+    @Test
     public void testDeleteProductById() {
         doNothing().when(service).deleteProductById(1L);
 
         ResponseEntity<?> response = controller.deleteProductById(1L);
 
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Product deleted successfully", response.getBody());
-    }*/
+//        assertEquals("Product deleted successfully", response.getBody());  // wrong
+        Map<String, Object> expectedResponse = Map.of("productId", 1L, "message", "Product deleted successfully");
+        assertEquals(expectedResponse, response.getBody());
+
+    }
 }

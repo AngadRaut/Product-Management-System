@@ -1,7 +1,6 @@
 package com.pms.controllers;
 
 import com.pms.controller.CategoryController;
-import com.pms.custom_exceptions.ResourceNotFoundException;
 import com.pms.entities.Category;
 import com.pms.services.impl.CategoryServiceImpl;
 import org.junit.jupiter.api.Assertions;
@@ -70,13 +69,23 @@ public class CategoryControllerTest {
         assertTrue(response.getBody().contains("Invalid input."));
     }
 
-    @Test
+  /*  @Test
     void addCategory() {
         when(categoryController.addCategory(category.get(),bindingResult)).thenReturn(new ResponseEntity<>(HttpStatus.CREATED));
         ResponseEntity<String> response = categoryController.addCategory(category.get(), bindingResult);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    }
+    }*/
+    @Test
+    void addCategory() {
+        Category category = new Category();
 
+        when(bindingResult.hasErrors()).thenReturn(false);
+        when(categoryService.saveCategory(any(Category.class))).thenReturn(category);
+
+        ResponseEntity<String> response = categoryController.addCategory(category, bindingResult);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
     @Test
     public void addCategory_ValidationFailureTest() {
         Category invalidCategory = new Category();
@@ -128,8 +137,7 @@ public class CategoryControllerTest {
 
         Mockito.verify(categoryService, times(1)).findAllCategory();
     }
-/*
-    @Test
+   /* @Test
     void testGetAllCategories_ReturnsNotFound_WhenNoCategoriesExist() {
         Mockito.when(categoryService.findAllCategory()).thenReturn(Collections.emptyList());
         ResponseEntity<?> response = categoryController.getAllCategories();

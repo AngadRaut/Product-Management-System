@@ -1,7 +1,6 @@
 package com.pms.controllers;
 
 import com.pms.controller.SellerController;
-import com.pms.entities.Category;
 import com.pms.entities.Seller;
 import com.pms.services.impl.SellerServiceImpl;
 import org.junit.jupiter.api.Assertions;

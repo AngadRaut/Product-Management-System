@@ -18,7 +18,6 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 public class SellerServiceImplTest {
@@ -117,25 +116,6 @@ public class SellerServiceImplTest {
             this.sellerService.findSellerById(5L);
         });
     }
-
-  /*  @Test
-    void deleteSellerByIdTest() {
-        Long sellerId = 9L;
-        Optional<Seller> seller = Optional.of(new Seller());
-        seller.get().setSellerId(sellerId);
-        seller.get().setSellerName("John Smith");
-        seller.get().setMobileNo("9123456789");
-        seller.get().setEmail("johnsmith@example.com");
-        seller.get().setCompanyName("Tech Innovations Ltd.");
-        seller.get().setAddress1("789 Market Street, Chicago");
-        seller.get().setAddress2("Building 10");
-        Mockito.when(this.sellerRepository.findById(sellerId)).thenReturn(seller);
-
-        sellerService.deleteSellerById(sellerId);
-
-        verify(sellerRepository, times(1)).findById(sellerId);
-        verify(sellerRepository, times(1)).delete(any(Seller.class));
-    }*/
 /*  @Test
   void deleteSellerByIdTest() {
       // Arrange
@@ -170,7 +150,7 @@ public class SellerServiceImplTest {
         Assertions.assertEquals("789 Market Street, Chicago", existingSeller.getAddress1());
     }
 
-  /*  @Test
+    @Test
     public void updateSeller_NegativeTest() {
         // Arrange
         Long sellerId = 99L;
@@ -183,10 +163,9 @@ public class SellerServiceImplTest {
         ResourceNotFoundException thrown = Assertions.assertThrows(ResourceNotFoundException.class, () -> {
             sellerService.updateSeller(sellerId, updatedSeller);
         });
-        Assertions.assertTrue(thrown.getMessage().contains("Seller with id " + sellerId + " not found"));
+        Assertions.assertEquals("Seller with id " + sellerId + " is not present in the record.", thrown.getMessage());
 
-        // Verify findById was called once
         Mockito.verify(sellerRepository, times(1)).findById(sellerId);
         Mockito.verify(sellerRepository, times(0)).save(any(Seller.class));
-    }*/
+    }
 }
