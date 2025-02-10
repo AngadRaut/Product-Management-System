@@ -11,11 +11,18 @@ import com.pms.services.ProductAndProductDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductAndProductDetailsServiceImpl implements ProductAndProductDetailsService {
@@ -61,7 +68,7 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
         productDetails.setFeatures(productRequest.getFeatures());
         productDetails.setQuantity(productRequest.getQuantity());
         productDetails.setProductId(product1.getProductId());
-        log.debug("Saving product details with name: {}",productDetails.getProductDetailsId());
+        log.debug("Saving product details with name: {}", productDetails.getProductDetailsId());
         ProductDetails productDetails1 = this.productDetailsRepository.save(productDetails);
         log.info("ProductDetails saved successfully: ProductDetails ID - {}", productDetails.getProductDetailsId());
         return "Product and Product Details created successfully: Product ID - " + product.getProductId() + ", Product Details ID - " + productDetails1.getProductDetailsId();
@@ -136,10 +143,10 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
         log.info("Received request to delete product by ID: {}", productId);
         Optional<Product> byId = this.productRepository.findById(productId);
         Optional<ProductDetails> productDetailsByProductId = this.productDetailsRepository.findProductDetailsByProductId(productId);
-        if(byId.isEmpty() || productDetailsByProductId.isEmpty()){
+        if (byId.isEmpty() || productDetailsByProductId.isEmpty()) {
             log.warn("Product or product details not found for ID: {}", productId);
-            throw new ResourceNotFoundException("Product having id "+productId+" is not present in the records.");
-        }else {
+            throw new ResourceNotFoundException("Product having id " + productId + " is not present in the records.");
+        } else {
             log.info("Deleting product with ID: {}", productId);
             this.productRepository.deleteById(productId);
             this.productDetailsRepository.deleteProjectDetailsByProductId(productId);
@@ -152,7 +159,7 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
         log.info("Received request to update product : {}", productId);
         Optional<Product> productById = this.productRepository.findById(productId);
 
-        if(productById.isEmpty()){
+        if (productById.isEmpty()) {
             log.warn("Product not found for ID: {}", productId);
             throw new ResourceNotFoundException("Product with id " + productId + " is not present in the records.");
         }
@@ -181,7 +188,7 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
                     return new ResourceNotFoundException("ProductDetails not found for productId " + productId);
                 });
 
-        log.info("productDetails{}:",productDetails);
+        log.info("productDetails{}:", productDetails);
 
         // Check If productDetailsId Exists Before Updating
         String productDetailsId = productDetails.getProductDetailsId();
@@ -193,7 +200,7 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
         }
 
         // if ProductDetails primary key is not null then print it through log
-        log.info("ProductDetails primary key  productDetailsId - {} : ",productId);
+        log.info("ProductDetails primary key  productDetailsId - {} : ", productId);
         productDetailsRepository.deleteProjectDetailsByProductId(productId);
 
         productDetails.setProductDetailsId(productDetailsId);
@@ -215,5 +222,38 @@ public class ProductAndProductDetailsServiceImpl implements ProductAndProductDet
         ProductDetails productDetails1 = this.productDetailsRepository.save(productDetails);
         log.info("ProductDetails updated successfully.");
         log.info("Product and ProductDetails updated successfully!");
+    }
+
+    @Override
+    public List<ProductResponse> findProductUsingPagination(int pageNo, int pageSize, String sortBy, String direction) {
+        log.info("Received request to find all products using pageable for pageNo={}, pageSize={}, sortBy={}, direction={}", pageNo, pageSize, sortBy, direction);
+        Sort sort = Sort.by(Sort.Order.by(sortBy).with(direction.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC));
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Product> allProducts = this.productRepository.findAll(pageable);
+
+     /*    List<ProductDetails> allProductDetails = this.productDetailsRepository.findAll();
+       // match or bind product with correct productDetails
+        List<ProductResponse> list = allProducts.stream().map(product -> {
+            return allProductDetails.stream()
+                     .filter(productDetails -> productDetails.getProductId().equals(product.getProductId()))
+                     .findFirst()
+                     .map(details -> new ProductResponse(product, details))
+                     .orElse(null);
+        }).filter(Objects::nonNull).toList();*/
+
+        // second logic using map
+        Map<Long, ProductDetails> map = this.productDetailsRepository.findAll().stream()
+                .collect(Collectors.toMap(ProductDetails::getProductId, Function.identity()));
+
+        List<ProductResponse> list = allProducts.stream().map(product -> (
+                map.containsKey(product.getProductId()) ? new ProductResponse(product, map.get(product.getProductId())) : null)
+        ).filter(Objects::nonNull).toList();
+
+        if (list.isEmpty()) {
+            log.warn("No product found for pageNo={}, pageSize={}, sortBy={}, direction={}", pageNo, pageSize, sortBy, direction);
+            throw new ResourceNotFoundException("No product found in records!");
+        }
+        return list;
     }
 }

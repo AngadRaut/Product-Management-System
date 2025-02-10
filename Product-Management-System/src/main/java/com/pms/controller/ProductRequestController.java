@@ -30,8 +30,6 @@ public class ProductRequestController {
     @PostMapping("/add")
     public ResponseEntity<?> add(@Valid @RequestBody ProductRequest productRequest, BindingResult result){
         log.info("Received request to add product.");
-
-
         // Validate the input
         if (result.hasErrors()) {
             log.warn("Validation failed for product request:{}",result.getAllErrors());
@@ -92,5 +90,17 @@ public class ProductRequestController {
         }
         this.service.updateProductById(productId,productRequest);
         return ResponseEntity.status(HttpStatus.OK).body("Product updated successfully.");
+    }
+    // handler method to get product using pagination
+    @GetMapping("/getAll/usingPageable")
+    public ResponseEntity<List<ProductResponse>> findProductUsingPageable(
+            @RequestParam(value = "pageNo",defaultValue = "0",required = false) int pageNo,
+            @RequestParam(value = "pageSize",defaultValue = "5",required = false) int pageSize,
+            @RequestParam(value = "",defaultValue = "",required = false) String sortBy,
+            @RequestParam(value = "",defaultValue = "",required = false) String direction
+    ){
+        log.info("Received request to controller method to find all products using pageable for pageNo={}, pageSize={}, sortBy={}, direction={}", pageNo, pageSize, sortBy, direction);
+        List<ProductResponse> productUsingPagination = this.service.findProductUsingPagination(pageNo, pageSize, sortBy, direction);
+        return ResponseEntity.status(HttpStatus.OK).body(productUsingPagination);
     }
 }
